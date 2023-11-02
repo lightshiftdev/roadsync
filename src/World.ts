@@ -58,6 +58,19 @@ export class World {
       newTree,
       ground.get()
     );
+    this.actions(secondCar);
+  }
+
+  actions(car: Car) {
+    setTimeout(() => {
+      car.accelerate();
+      setTimeout(() => {
+        car.changeLane();
+        setTimeout(() => {
+          car.changeLane();
+        }, 2000);
+      }, 1000);
+    }, 2000);
   }
 
   render() {

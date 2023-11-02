@@ -1,23 +1,17 @@
 {
-  "name": "crab-tank",
-  "version": "1.0.0",
-  "description": "Multiplayer tanks game",
-  "main": "src/index.js",
+  "name": "croquet-road-sim",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
   "scripts": {
-    "watch": "tsc -w",
-    "serve": "cd dist && web-dev-server --node-resolve --watch --open --app-index index.html",
-    "dev": "npm run cp-public && npm run watch & npm run serve",
-    "cp-public": "rm -rf ./dist && cp -r ./public ./dist"
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
   },
-  "author": "CondeGil",
-  "license": "ISC",
   "devDependencies": {
     "@types/three": "^0.158.1",
-    "@web/dev-server": "^0.4.0",
-    "nodemon": "^3.0.1",
-    "ts-node": "^10.9.1",
-    "tsc": "^2.0.4",
-    "typescript": "^5.2.2"
+    "typescript": "^5.0.2",
+    "vite": "^4.4.5"
   },
   "dependencies": {
     "@croquet/croquet": "^1.0.5",
