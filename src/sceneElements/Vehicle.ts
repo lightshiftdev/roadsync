@@ -16,7 +16,7 @@ export default class Vehicle extends SceneElement {
     blinkers: Group,
     speed: number
   ) {
-    super();
+    super(new Group());
     this.actualLane = actualLane;
     this.wheels = wheels;
     this.blinkers = blinkers;

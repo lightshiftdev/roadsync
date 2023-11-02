@@ -1,8 +1,7 @@
 import { Mesh, MeshStandardMaterial, PlaneGeometry } from "three";
+import SceneElement from "./SceneElement";
 
-export default class Ground {
-  ground: Mesh;
-
+export default class Ground extends SceneElement<Mesh> {
   constructor(
     width?: number | undefined,
     height?: number | undefined,
@@ -17,14 +16,11 @@ export default class Ground {
     );
     planeGeometry.rotateX(-Math.PI * 0.5);
     const planeMaterial = new MeshStandardMaterial({ color: 0x64c460 });
-    this.ground = new Mesh(planeGeometry, planeMaterial);
-    this.ground.position.y = -0.9;
-    this.ground.receiveShadow = true;
+    const element = new Mesh(planeGeometry, planeMaterial);
+    super(element);
+    this.element.position.y = -0.9;
+    this.element.receiveShadow = true;
   }
 
-  getGround() {
-    return this.ground;
-  }
-
-  animateGround() {}
+  animate() {}
 }

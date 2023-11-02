@@ -1,5 +1,5 @@
 import { BoxGeometry, Group, Mesh, MeshLambertMaterial } from "three";
-import SceneElement from "./elements/SceneElement";
+import SceneElement from "./SceneElement";
 
 export default class Road extends SceneElement {
   lines: Group;
@@ -10,7 +10,7 @@ export default class Road extends SceneElement {
   initialPosition: number;
 
   constructor(length: number, width: number) {
-    super();
+    super(new Group());
     this.roadLength = length;
     this.roadWidth = width;
     const ground = new Mesh(

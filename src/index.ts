@@ -1,12 +1,12 @@
 import * as THREE from "three";
-import Road from "./Road";
-import Car from "./Car";
-import Tree from "./Tree";
-import Ground from "./Ground";
+import Road from "./sceneElements/Road";
+import Car from "./sceneElements/Car";
+import Tree from "./sceneElements/Tree";
+import Ground from "./sceneElements/Ground";
 
 const ASPECT_RATIO = window.innerWidth / window.innerHeight;
 const D = 70;
-const ISOMETRIC_ADJUSTED_PLANE = D * 4 * ASPECT_RATIO;
+export const ISOMETRIC_ADJUSTED_PLANE = D * 4 * ASPECT_RATIO;
 export const LEFT_LANE = -D / 6;
 export const RIGHT_LANE = D / 6;
 const scene = new THREE.Scene();
@@ -35,7 +35,7 @@ const ground = new Ground(
   30
 );
 
-const firstCar = new Car({ initialLane: "right", initialPosition: 30 });
+const firstCar = new Car({ initialLane: "right", initialPosition: -10 });
 const secondCar = new Car({
   initialLane: "right",
   initialPosition: 110,
@@ -59,7 +59,7 @@ function init() {
   light.shadow.mapSize.height = 512; // default
   light.shadow.camera.near = 1; // default
   light.shadow.camera.far = 130; // default
-  light.shadow.camera.bottom = -D * ASPECT_RATIO;
+  light.shadow.camera.bottom = -D * ASPECT_RATIO - 30;
   light.shadow.camera.top = D * ASPECT_RATIO;
   light.shadow.camera.left = D * ASPECT_RATIO;
   light.shadow.camera.right = -D * ASPECT_RATIO;
@@ -83,7 +83,7 @@ function init() {
   newTree.position.x = 40;
   scene.add(newTree);
 
-  scene.add(ground.getGround());
+  scene.add(ground.get());
 
   // const helper = new THREE.CameraHelper(light.shadow.camera);
   // scene.add(helper);
@@ -92,10 +92,14 @@ function init() {
 }
 
 function actions() {
-  secondCar.accelerate();
-  secondCar.changeLane();
   setTimeout(() => {
-    secondCar.changeLane();
+    secondCar.accelerate();
+    setTimeout(() => {
+      secondCar.changeLane();
+      setTimeout(() => {
+        secondCar.changeLane();
+      }, 2000);
+    }, 1000);
   }, 2000);
 }
 
@@ -105,6 +109,7 @@ function render() {
   firstCar.animate();
   secondCar.animate();
   firstCar.animate();
-  ground.animateGround();
+  ground.animate();
+  tree.animate();
   renderer.render(scene, camera);
 }

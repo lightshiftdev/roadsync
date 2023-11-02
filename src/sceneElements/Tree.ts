@@ -1,5 +1,6 @@
 import { BoxGeometry, Group, Mesh, MeshLambertMaterial } from "three";
-import SceneElement from "./elements/SceneElement";
+import SceneElement from "./SceneElement";
+import { ISOMETRIC_ADJUSTED_PLANE } from "../index";
 
 type Props = {
   multiplier: number;
@@ -7,7 +8,7 @@ type Props = {
 
 export default class Tree extends SceneElement {
   constructor({ multiplier }: Props) {
-    super();
+    super(new Group());
     const geometry = new BoxGeometry(multiplier, multiplier, multiplier);
 
     const leaveDarkMaterial = new MeshLambertMaterial({ color: 0x91e56e });
@@ -65,5 +66,11 @@ export default class Tree extends SceneElement {
     this.element.position.y = 4;
   }
 
-  animate() {}
+  animate() {
+    if (this.element.position.z >= ISOMETRIC_ADJUSTED_PLANE / 2) {
+      this.element.position.z = -ISOMETRIC_ADJUSTED_PLANE / 2;
+    } else {
+      this.element.position.z += 1;
+    }
+  }
 }

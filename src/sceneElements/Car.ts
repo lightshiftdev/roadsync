@@ -5,7 +5,7 @@ import {
   Mesh,
   MeshLambertMaterial,
 } from "three";
-import Vehicle from "./elements/Vehicle";
+import Vehicle from "./Vehicle";
 
 type Props = {
   initialLane: "left" | "right";
