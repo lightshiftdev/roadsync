@@ -1,6 +1,6 @@
 import { BoxGeometry, Group, Mesh, MeshLambertMaterial } from "three";
 import SceneElement from "./SceneElement";
-import { ISOMETRIC_ADJUSTED_PLANE } from "../system/constants";
+import { ISOMETRIC_ADJUSTED_PLANE, ROAD_WIDTH } from "../system/constants";
 
 type Props = {
   multiplier: number;
@@ -64,11 +64,23 @@ export default class Tree extends SceneElement {
     this.element.add(squareLeave03);
     this.element.add(stem);
     this.element.position.y = 4;
+    this.setRandomPosition(true);
+  }
+
+  setRandomPosition(firstTime: boolean) {
+    const max = ISOMETRIC_ADJUSTED_PLANE / 2;
+    const min = ROAD_WIDTH / 2 + 3;
+    const side = Math.round(Math.random()) === 0 ? -1 : 1;
+    const random = Math.random() * (max - min) + min;
+    this.element.position.x = side * random;
+    this.element.position.z = firstTime
+      ? -Math.random() * ISOMETRIC_ADJUSTED_PLANE * 2
+      : -Math.random() * ISOMETRIC_ADJUSTED_PLANE - ISOMETRIC_ADJUSTED_PLANE;
   }
 
   animate() {
     if (this.element.position.z >= ISOMETRIC_ADJUSTED_PLANE / 2) {
-      this.element.position.z = -ISOMETRIC_ADJUSTED_PLANE / 2;
+      this.setRandomPosition(false);
     } else {
       this.element.position.z += 1;
     }

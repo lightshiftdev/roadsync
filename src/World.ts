@@ -7,7 +7,8 @@ import Road from "./sceneElements/Road";
 import Car from "./sceneElements/Car";
 import Tree from "./sceneElements/Tree";
 import Ground from "./sceneElements/Ground";
-import { D, ISOMETRIC_ADJUSTED_PLANE } from "./system/constants";
+import { ISOMETRIC_ADJUSTED_PLANE, ROAD_WIDTH } from "./system/constants";
+// import { CameraHelper } from "three";
 
 export class World {
   camera;
@@ -26,11 +27,12 @@ export class World {
 
   init() {
     // scene.add(new THREE.AxesHelper(40));
+    // this.scene.add(new CameraHelper(this.light.shadow.camera));
     this.scene.add(this.light);
     this.camera.lookAt(this.scene.position);
 
-    const road = new Road(ISOMETRIC_ADJUSTED_PLANE, D / 1.5);
-    const tree = new Tree({ multiplier: 7 });
+    const road = new Road(ISOMETRIC_ADJUSTED_PLANE, ROAD_WIDTH);
+    const trees: Tree[] = [];
     const ground = new Ground(
       ISOMETRIC_ADJUSTED_PLANE,
       ISOMETRIC_ADJUSTED_PLANE,
@@ -47,15 +49,16 @@ export class World {
       },
     });
 
-    const newTree = tree.get();
-    newTree.position.x = 40;
+    for (let i = 0; i < Math.round(ISOMETRIC_ADJUSTED_PLANE) / 10; i++) {
+      trees.push(new Tree({ multiplier: 7 }));
+    }
 
-    this.loop.updatables.push(road, firstCar, secondCar, tree, ground);
+    this.loop.updatables.push(road, firstCar, secondCar, ...trees, ground);
     this.scene.add(
       road.get(),
       firstCar.get(),
       secondCar.get(),
-      newTree,
+      ...trees.map((t) => t.get()),
       ground.get()
     );
     this.actions(secondCar);

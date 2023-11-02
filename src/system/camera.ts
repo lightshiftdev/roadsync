@@ -11,7 +11,13 @@ export function createCamera() {
     1000
   );
 
+  // Isometric:
   camera.position.set(D, D, D);
+  // Side:
+  // camera.position.set(D, 0, 0);
+  // Top:
   // camera.position.set(0, D, 0);
+  // Front:
+  // camera.position.set(0, 0, D);
   return camera;
 }
