@@ -22,7 +22,9 @@ export default class Road {
     ground.position.y = -1;
     this.road.add(ground);
     this.lineSize = this.roadLength / 16;
-    const totalLines = Math.ceil(this.roadLength / 20);
+    const totalLines = Math.ceil(
+      this.roadLength / (this.lineSize + this.lineSpace)
+    );
     this.lines = new Group();
     [...Array(totalLines).keys()].forEach((key) => {
       const line = new Mesh(

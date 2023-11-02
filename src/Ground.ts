@@ -15,13 +15,11 @@ export default class Ground {
       widthSegments,
       heightSegments
     );
+    planeGeometry.rotateX(-Math.PI * 0.5);
     const planeMaterial = new MeshStandardMaterial({ color: 0x64c460 });
     this.ground = new Mesh(planeGeometry, planeMaterial);
-    this.ground.position.y = 5;
+    this.ground.position.y = -0.9;
     this.ground.receiveShadow = true;
-    this.ground.rotateZ(71);
-    this.ground.rotateY(71);
-    this.ground.rotateX(71);
   }
 
   getGround() {

@@ -5,14 +5,16 @@ import Tree from "./Tree";
 import Ground from "./Ground";
 
 const aspect = window.innerWidth / window.innerHeight;
-const d = 70;
+const D = 70;
+export const LEFT_LANE = -D / 6;
+export const RIGHT_LANE = D / 6;
 const scene = new THREE.Scene();
 
 const camera = new THREE.OrthographicCamera(
-  -d * aspect,
-  d * aspect,
-  d,
-  -d,
+  -D * aspect,
+  D * aspect,
+  D,
+  -D,
   1,
   1000
 );
@@ -21,11 +23,12 @@ const renderer = new THREE.WebGLRenderer();
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
-const road = new Road(d * 4 * aspect, d / 2);
+const road = new Road(D * 2, D / 1.5);
 
 const tree = new Tree({ multiplier: 7 });
 
-const ground = new Ground(d, d, 30, 30);
+console.log(D * 2 * aspect);
+const ground = new Ground(D * 2 * aspect, D * 2, 30, 30);
 
 const firstCar = new Car({ initialLane: "right", initialPosition: 30 });
 const secondCar = new Car({
@@ -43,8 +46,8 @@ render();
 function init() {
   // scene.background = new THREE.Color(0x64c460);
 
-  const light = new THREE.DirectionalLight(0xffffff, d / 10);
-  light.position.set(d - 10, d + d / 2, d + 10);
+  const light = new THREE.DirectionalLight(0xffffff, D / 10);
+  light.position.set(D - 10, D + D / 2, D + 10);
   light.castShadow = true;
   scene.add(light);
 
@@ -55,7 +58,7 @@ function init() {
   // scene.add(new THREE.AxesHelper(40));
 
   //camera.position.set(d, d, d);
-  camera.position.set(0, d, 0);
+  camera.position.set(0, D, 0);
   camera.lookAt(scene.position);
 
   renderer.setSize(window.innerWidth - 50, window.innerHeight - 50);
@@ -87,6 +90,7 @@ function render() {
   road.animateRoad();
   firstCar.animateCar();
   secondCar.animateCar();
+  firstCar.animateCar();
   ground.animateGround();
   renderer.render(scene, camera);
 }

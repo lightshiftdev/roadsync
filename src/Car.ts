@@ -5,9 +5,7 @@ import {
   Mesh,
   MeshLambertMaterial,
 } from "three";
-
-const LEFT_LANE = -8;
-const RIGHT_LANE = 12;
+import { LEFT_LANE, RIGHT_LANE } from "./index";
 
 type Props = {
   initialLane: "left" | "right";
