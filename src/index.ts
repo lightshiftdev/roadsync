@@ -20,7 +20,7 @@ const camera = new THREE.OrthographicCamera(
   1000
 );
 
-const renderer = new THREE.WebGLRenderer();
+const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
@@ -51,15 +51,21 @@ render();
 function init() {
   // scene.background = new THREE.Color(0x64c460);
 
-  const light = new THREE.DirectionalLight(0xffffff, D / 10);
-  light.position.set(D - 10, D + D / 2, D + 10);
+  const light = new THREE.DirectionalLight(0xffffff, D / 15);
+  light.position.set(20, 100, 25);
   light.castShadow = true;
-  scene.add(light);
 
   light.shadow.mapSize.width = 512; // default
   light.shadow.mapSize.height = 512; // default
-  light.shadow.camera.near = 0.5; // default
-  light.shadow.camera.far = 500; // default
+  light.shadow.camera.near = 1; // default
+  light.shadow.camera.far = 130; // default
+  light.shadow.camera.bottom = -D * ASPECT_RATIO;
+  light.shadow.camera.top = D * ASPECT_RATIO;
+  light.shadow.camera.left = D * ASPECT_RATIO;
+  light.shadow.camera.right = -D * ASPECT_RATIO;
+  /*
+   */
+  scene.add(light);
   // scene.add(new THREE.AxesHelper(40));
 
   camera.position.set(D, D, D);
@@ -69,21 +75,24 @@ function init() {
   renderer.setSize(window.innerWidth - 50, window.innerHeight - 50);
   document.body.appendChild(renderer.domElement);
 
-  scene.add(road.getRoad());
-  scene.add(firstCar.getCar());
-  scene.add(secondCar.getCar());
+  scene.add(road.get());
+  scene.add(firstCar.get());
+  scene.add(secondCar.get());
 
-  const newTree = tree.getTree();
-  newTree.position.x = 20;
+  const newTree = tree.get();
+  newTree.position.x = 40;
   scene.add(newTree);
 
   scene.add(ground.getGround());
+
+  // const helper = new THREE.CameraHelper(light.shadow.camera);
+  // scene.add(helper);
 
   actions();
 }
 
 function actions() {
-  secondCar.accelerateCar();
+  secondCar.accelerate();
   secondCar.changeLane();
   setTimeout(() => {
     secondCar.changeLane();
@@ -92,10 +101,10 @@ function actions() {
 
 function render() {
   requestAnimationFrame(render);
-  road.animateRoad();
-  firstCar.animateCar();
-  secondCar.animateCar();
-  firstCar.animateCar();
+  road.animate();
+  firstCar.animate();
+  secondCar.animate();
+  firstCar.animate();
   ground.animateGround();
   renderer.render(scene, camera);
 }

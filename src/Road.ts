@@ -1,7 +1,7 @@
 import { BoxGeometry, Group, Mesh, MeshLambertMaterial } from "three";
+import SceneElement from "./elements/SceneElement";
 
-export default class Road {
-  road: Group;
+export default class Road extends SceneElement {
   lines: Group;
   roadLength: number;
   lineSize: number;
@@ -10,7 +10,7 @@ export default class Road {
   initialPosition: number;
 
   constructor(length: number, width: number) {
-    this.road = new Group();
+    super();
     this.roadLength = length;
     this.roadWidth = width;
     const ground = new Mesh(
@@ -19,9 +19,10 @@ export default class Road {
         color: 0x232429,
       })
     );
+    ground.receiveShadow = true;
     ground.position.y = -1;
-    this.road.add(ground);
-    this.lineSize = this.roadLength / 16;
+    this.element.add(ground);
+    this.lineSize = this.roadLength / 22;
     const totalLines = Math.ceil(
       this.roadLength / (this.lineSize + this.lineSpace)
     );
@@ -33,6 +34,7 @@ export default class Road {
           color: 0xffffff,
         })
       );
+      line.receiveShadow = true;
       line.position.y = -0.9;
       line.position.z =
         (key - totalLines / 2) * Math.round(this.lineSize + this.lineSpace);
@@ -40,14 +42,10 @@ export default class Road {
     });
 
     this.initialPosition = this.lines.position.z;
-    this.road.add(this.lines);
+    this.element.add(this.lines);
   }
 
-  getRoad() {
-    return this.road;
-  }
-
-  animateRoad() {
+  animate() {
     const size = Math.round(this.lineSize + this.lineSpace);
     const incrementor =
       this.lines.position.z === this.initialPosition + size ? -size : 1;
