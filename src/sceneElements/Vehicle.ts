@@ -1,6 +1,6 @@
 import { Group, Mesh, MeshLambertMaterial } from "three";
 import SceneElement from "./SceneElement";
-import { LEFT_LANE, RIGHT_LANE } from "../index";
+import { LEFT_LANE, RIGHT_LANE } from "../system/constants";
 
 export default class Vehicle extends SceneElement {
   actualLane: "left" | "right";

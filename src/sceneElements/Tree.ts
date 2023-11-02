@@ -1,6 +1,6 @@
 import { BoxGeometry, Group, Mesh, MeshLambertMaterial } from "three";
 import SceneElement from "./SceneElement";
-import { ISOMETRIC_ADJUSTED_PLANE } from "../index";
+import { ISOMETRIC_ADJUSTED_PLANE } from "../system/constants";
 
 type Props = {
   multiplier: number;
