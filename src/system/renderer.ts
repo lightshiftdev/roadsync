@@ -6,7 +6,8 @@ export function createRenderer() {
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = PCFSoftShadowMap;
 
-  renderer.setSize(window.innerWidth - 50, window.innerHeight - 50);
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setPixelRatio(2);
   document.body.appendChild(renderer.domElement);
 
   return renderer;

@@ -62,14 +62,15 @@ export class World {
   }
 
   actions(car: Car) {
+    // TODO: Change this to tween if possible
     setTimeout(() => {
       car.accelerate();
       setTimeout(() => {
         car.changeLane();
         setTimeout(() => {
           car.changeLane();
-        }, 2000);
-      }, 1000);
+        }, 1500);
+      }, 900);
     }, 2000);
   }
 
