@@ -4,15 +4,16 @@ import Car from "./Car";
 import Tree from "./Tree";
 import Ground from "./Ground";
 
-const aspect = window.innerWidth / window.innerHeight;
+const ASPECT_RATIO = window.innerWidth / window.innerHeight;
 const D = 70;
+const ISOMETRIC_ADJUSTED_PLANE = D * 4 * ASPECT_RATIO;
 export const LEFT_LANE = -D / 6;
 export const RIGHT_LANE = D / 6;
 const scene = new THREE.Scene();
 
 const camera = new THREE.OrthographicCamera(
-  -D * aspect,
-  D * aspect,
+  -D * ASPECT_RATIO,
+  D * ASPECT_RATIO,
   D,
   -D,
   1,
@@ -23,12 +24,16 @@ const renderer = new THREE.WebGLRenderer();
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
-const road = new Road(D * 2, D / 1.5);
+const road = new Road(ISOMETRIC_ADJUSTED_PLANE, D / 1.5);
 
 const tree = new Tree({ multiplier: 7 });
 
-console.log(D * 2 * aspect);
-const ground = new Ground(D * 2 * aspect, D * 2, 30, 30);
+const ground = new Ground(
+  ISOMETRIC_ADJUSTED_PLANE,
+  ISOMETRIC_ADJUSTED_PLANE,
+  30,
+  30
+);
 
 const firstCar = new Car({ initialLane: "right", initialPosition: 30 });
 const secondCar = new Car({
@@ -57,8 +62,8 @@ function init() {
   light.shadow.camera.far = 500; // default
   // scene.add(new THREE.AxesHelper(40));
 
-  //camera.position.set(d, d, d);
-  camera.position.set(0, D, 0);
+  camera.position.set(D, D, D);
+  // camera.position.set(0, D, 0);
   camera.lookAt(scene.position);
 
   renderer.setSize(window.innerWidth - 50, window.innerHeight - 50);
