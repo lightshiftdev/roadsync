@@ -1,0 +1,26 @@
+{
+  "name": "crab-tank",
+  "version": "1.0.0",
+  "description": "Multiplayer tanks game",
+  "main": "src/index.js",
+  "scripts": {
+    "watch": "tsc -w",
+    "serve": "cd dist && web-dev-server --node-resolve --watch --open --app-index index.html",
+    "dev": "npm run cp-public && npm run watch & npm run serve",
+    "cp-public": "rm -rf ./dist && cp -r ./public ./dist"
+  },
+  "author": "CondeGil",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/three": "^0.158.1",
+    "@web/dev-server": "^0.4.0",
+    "nodemon": "^3.0.1",
+    "ts-node": "^10.9.1",
+    "tsc": "^2.0.4",
+    "typescript": "^5.2.2"
+  },
+  "dependencies": {
+    "@croquet/croquet": "^1.0.5",
+    "three": "^0.158.0"
+  }
+}
