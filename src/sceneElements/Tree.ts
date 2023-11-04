@@ -1,15 +1,24 @@
 import { BoxGeometry, Group, Mesh, MeshLambertMaterial } from "three";
 import SceneElement from "./SceneElement";
-import { ISOMETRIC_ADJUSTED_PLANE, ROAD_WIDTH } from "../system/constants";
+import TreeModel from "../model/TreeModel";
+import CartesianAnimatableElement from "./CartesianAnimatableElement";
 
 type Props = {
   multiplier: number;
+  x: number;
+  z: number;
+  id: string;
 };
 
-export default class Tree extends SceneElement {
-  constructor({ multiplier }: Props) {
+export default class Tree extends CartesianAnimatableElement {
+  id: string;
+  initialZ: number;
+
+  constructor({ multiplier, x, z, id }: Props) {
     super(new Group());
     const geometry = new BoxGeometry(multiplier, multiplier, multiplier);
+    this.id = id;
+    this.initialZ = z;
 
     const leaveDarkMaterial = new MeshLambertMaterial({ color: 0x91e56e });
     const leaveLightMaterial = new MeshLambertMaterial({ color: 0xa2ff7a });
@@ -64,25 +73,11 @@ export default class Tree extends SceneElement {
     this.element.add(squareLeave03);
     this.element.add(stem);
     this.element.position.y = 4;
-    this.setRandomPosition(true);
+    this.element.position.x = x;
+    this.element.position.z = z;
   }
 
-  setRandomPosition(firstTime: boolean) {
-    const max = ISOMETRIC_ADJUSTED_PLANE / 2;
-    const min = ROAD_WIDTH / 2 + 3;
-    const side = Math.round(Math.random()) === 0 ? -1 : 1;
-    const random = Math.random() * (max - min) + min;
-    this.element.position.x = side * random;
-    this.element.position.z = firstTime
-      ? -Math.random() * ISOMETRIC_ADJUSTED_PLANE * 2
-      : -Math.random() * ISOMETRIC_ADJUSTED_PLANE - ISOMETRIC_ADJUSTED_PLANE;
-  }
-
-  animate() {
-    if (this.element.position.z >= ISOMETRIC_ADJUSTED_PLANE / 2) {
-      this.setRandomPosition(false);
-    } else {
-      this.element.position.z += 1;
-    }
+  animate(model: TreeModel) {
+    this.cartesianAnimation(model);
   }
 }

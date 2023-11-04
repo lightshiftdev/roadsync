@@ -1,36 +1,40 @@
 import { Group, Mesh, MeshLambertMaterial } from "three";
-import SceneElement from "./SceneElement";
 import { LEFT_LANE, RIGHT_LANE } from "../system/constants";
+import CarModel, { Lane } from "../model/CarModel";
+import CartesianAnimatableElement from "./CartesianAnimatableElement";
 
-export default class Vehicle extends SceneElement {
-  actualLane: "left" | "right";
+export default class Vehicle extends CartesianAnimatableElement {
+  lane: Lane;
   wheels: Group;
   blinkers: Group;
   speed: number;
   blinkingRight?: ReturnType<typeof setInterval>;
   blinkingLeft?: ReturnType<typeof setInterval>;
 
-  constructor(
-    actualLane: "left" | "right",
-    wheels: Group,
-    blinkers: Group,
-    speed: number
-  ) {
+  constructor(lane: Lane, wheels: Group, blinkers: Group, speed: number) {
     super(new Group());
-    this.actualLane = actualLane;
+    this.lane = lane;
     this.wheels = wheels;
     this.blinkers = blinkers;
     this.speed = speed;
-    this.element.position.x = actualLane === "left" ? LEFT_LANE : RIGHT_LANE;
+    this.element.position.x = lane === "left" ? LEFT_LANE : RIGHT_LANE;
   }
 
-  animate(): void {
+  animate(model: CarModel): void {
+    this.cartesianAnimation(model, false, true);
+
     this.wheels.children.forEach((wheel) => {
-      wheel.rotateX(-0.1 * this.speed);
+      if (this.speed === -1) {
+        wheel.rotateX(0.05);
+      }
+      if (this.speed === 0) {
+        wheel.rotateX(-0.05);
+      }
+      if (this.speed === 1) {
+        wheel.rotateX(-0.1);
+      }
     });
-    this.get().position.z -= this.speed - 1;
-    const lastLanePosition =
-      this.actualLane === "right" ? RIGHT_LANE : LEFT_LANE;
+    const lastLanePosition = this.lane === "right" ? RIGHT_LANE : LEFT_LANE;
     if (lastLanePosition > this.get().position.x) {
       this.startBlinkers("right");
       this.stopBlinkers("left");
@@ -44,7 +48,7 @@ export default class Vehicle extends SceneElement {
     }
   }
 
-  startBlinkers(side?: "left" | "right") {
+  startBlinkers(side?: Lane) {
     const leftMaterial = (this.blinkers.children[0] as Mesh)
       .material as MeshLambertMaterial;
     const rightMaterial = (this.blinkers.children[1] as Mesh)
@@ -71,7 +75,7 @@ export default class Vehicle extends SceneElement {
     }
   }
 
-  stopBlinkers(side?: "left" | "right") {
+  stopBlinkers(side?: Lane) {
     const leftMaterial = (this.blinkers.children[0] as Mesh)
       .material as MeshLambertMaterial;
     const rightMaterial = (this.blinkers.children[1] as Mesh)
@@ -90,19 +94,7 @@ export default class Vehicle extends SceneElement {
     }
   }
 
-  accelerate() {
-    if (this.speed <= 2) {
-      this.speed += 1;
-    }
-  }
-
-  decelerate() {
-    if (this.speed >= 0) {
-      this.speed -= 1;
-    }
-  }
-
-  changeLane() {
-    this.actualLane = this.actualLane === "left" ? "right" : "left";
+  changeLane(lane: Lane) {
+    this.lane = lane;
   }
 }

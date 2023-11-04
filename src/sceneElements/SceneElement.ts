@@ -1,9 +1,10 @@
-import { Group } from "three";
+import { Model } from "@croquet/croquet";
+import { Group, Mesh } from "three";
 
-export default abstract class SceneElement<T = Group> {
-  element: T;
+export default abstract class SceneElement {
+  element: Group | Mesh;
 
-  constructor(element: T) {
+  constructor(element: Group | Mesh) {
     this.element = element;
   }
 
@@ -11,5 +12,5 @@ export default abstract class SceneElement<T = Group> {
     return this.element;
   }
 
-  abstract animate(): void;
+  abstract animate(model: Model): void;
 }

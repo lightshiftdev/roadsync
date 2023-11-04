@@ -1,7 +1,7 @@
 import { Mesh, MeshStandardMaterial, PlaneGeometry } from "three";
 import SceneElement from "./SceneElement";
 
-export default class Ground extends SceneElement<Mesh> {
+export default class Ground extends SceneElement {
   constructor(
     width?: number | undefined,
     height?: number | undefined,

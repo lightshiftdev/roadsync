@@ -8,8 +8,9 @@ import {
 import Vehicle from "./Vehicle";
 
 type Props = {
-  initialLane: "left" | "right";
-  initialPosition?: number;
+  lane: "left" | "right";
+  speed: number;
+  viewId: string;
   colors?: {
     body: ColorRepresentation;
     cabin: ColorRepresentation;
@@ -18,9 +19,7 @@ type Props = {
 };
 
 export default class Car extends Vehicle {
-  constructor({ initialLane, initialPosition, colors }: Props) {
-    const carSpeed = 1;
-
+  constructor({ speed, lane, colors, viewId }: Props) {
     const wheels = Car.createWheels(colors?.rims);
 
     const main = new Mesh(
@@ -34,18 +33,18 @@ export default class Car extends Vehicle {
       new BoxGeometry(12, 6, 16),
       new MeshLambertMaterial({ color: colors?.cabin || 0xffffff })
     );
+    cabin.name = viewId;
     cabin.castShadow = true;
     cabin.position.z = 2;
     cabin.position.y = 14;
 
     const blinkers = Car.createBlinkers();
-    super(initialLane, wheels, blinkers, carSpeed);
+    super(lane, wheels, blinkers, speed);
 
     this.element.add(wheels);
     this.element.add(main);
     this.element.add(cabin);
     this.element.add(blinkers);
-    this.element.position.z = initialPosition || 0;
     this.element.position.y = -3;
   }
 

@@ -1,5 +1,5 @@
 import { DirectionalLight } from "three";
-import { D, ISOMETRIC_ADJUSTED_PLANE } from "./constants";
+import { ISOMETRIC_ADJUSTED_PLANE } from "./constants";
 
 export function createLight() {
   const light = new DirectionalLight(0xffffff, 5);
@@ -14,7 +14,6 @@ export function createLight() {
   light.shadow.camera.top = ISOMETRIC_ADJUSTED_PLANE / 2;
   light.shadow.camera.left = ISOMETRIC_ADJUSTED_PLANE / 2;
   light.shadow.camera.right = -ISOMETRIC_ADJUSTED_PLANE / 2;
-  console.log(ISOMETRIC_ADJUSTED_PLANE);
 
   return light;
 }
