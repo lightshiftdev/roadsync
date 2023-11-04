@@ -5,8 +5,26 @@
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Croquet Road Simulator</title>
+    <style>
+      #collect-payment {
+        display: none;
+      }
+      #collect-payment.show {
+        display: inline-block;
+      }
+      h1 {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+      }
+    </style>
   </head>
   <body>
     <script type="module" src="/src/main.ts"></script>
+    <h1>
+      Balance: <span id="user-balance">0</span
+      ><button id="collect-payment">0 ETH</button>
+      <w3m-button />
+    </h1>
   </body>
 </html>

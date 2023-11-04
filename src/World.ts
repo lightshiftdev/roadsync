@@ -14,8 +14,12 @@ import {
   WINDOW_WIDTH,
 } from "./system/constants";
 import { View } from "@croquet/croquet";
-import SimModel from "./model/SimModel";
+import SimModel, { Message } from "./model/SimModel";
 import { Raycaster, Vector2 } from "three";
+import Wallet from "./smartcontract/Wallet";
+import { Address, formatEther, parseEther, parseGwei } from "viem";
+import CarModel from "./model/CarModel";
+import { waitForTransaction } from "@wagmi/core";
 // import { CameraHelper } from "three";
 
 export class World extends View {
@@ -26,9 +30,14 @@ export class World extends View {
   renderer;
   road: Road;
   trees: Map<string, Tree>;
-  cars: Map<string, Car>;
-
-  // loop;
+  cars: Map<Address, Car>;
+  wallet: Wallet;
+  address: Address;
+  nonce: number;
+  processingMessage: number;
+  startAction: number;
+  collectPayment?: Message;
+  collectButton;
 
   constructor(model: SimModel) {
     super(model);
@@ -40,7 +49,16 @@ export class World extends View {
     this.trees = new Map();
     this.cars = new Map();
     this.road = new Road(ISOMETRIC_ADJUSTED_PLANE, ROAD_WIDTH);
-    // this.loop = new Loop(this.camera, this.scene, this.renderer, this.model);
+    this.wallet = new Wallet();
+    this.address = "0x";
+    this.nonce = this.model.nonce;
+    this.processingMessage = this.model.nonce - 1;
+    this.startAction = this.model.nonce - 1;
+    this.collectButton = document.querySelector("#collect-payment");
+    this.collectButton?.addEventListener(
+      "click",
+      this.handleCollectPayment.bind(this)
+    );
     this.init();
   }
 
@@ -60,28 +78,30 @@ export class World extends View {
     this.scene.add(this.road.get(), ground.get());
     this.render();
 
+    void this.updateBalance();
+
     document.onkeydown = (e: KeyboardEvent) => {
       if (e.repeat) return;
       switch (e.key) {
         case "w":
         case "W":
         case "ArrowUp":
-          this.publish(this.viewId, "accelerate");
+          this.publish(this.address, "accelerate");
           break;
         case "s":
         case "S":
         case "ArrowDown":
-          this.publish(this.viewId, "decelerate");
+          this.publish(this.address, "decelerate");
           break;
         case "a":
         case "A":
         case "ArrowLeft":
-          this.publish(this.viewId, "change-left");
+          this.publish(this.address, "change-left");
           break;
         case "d":
         case "D":
         case "ArrowRight":
-          this.publish(this.viewId, "change-right");
+          this.publish(this.address, "change-right");
           break;
       }
     };
@@ -95,14 +115,49 @@ export class World extends View {
       raycaster.setFromCamera(mouse, this.camera);
 
       const intersects = raycaster.intersectObjects(this.scene.children);
-      console.log("Intersects:", intersects[0].object);
+      const toAddress = intersects[0].object.name;
+      const fromAddress = this.address;
+      console.log(intersects[0].object.name);
+      if (
+        this.processingMessage < this.nonce &&
+        toAddress &&
+        toAddress !== fromAddress
+      ) {
+        this.processingMessage = this.nonce;
+        this.publish(this.model.id, "add-message-to-queue", {
+          from: fromAddress,
+          to: toAddress,
+          amount: "0.00000000001",
+        });
+      }
     });
   }
 
+  getWalletAddress() {
+    this.address = this.wallet.getAddress();
+    if (this.address !== "0x") {
+      this.publish(this.model.id, "custom-view-join", this.address);
+    }
+  }
+
+  async updateBalance() {
+    const balanceElement = document.querySelector("#user-balance");
+    if (balanceElement && this.address !== "0x") {
+      const balance = await this.wallet.readContract();
+      balanceElement.innerHTML = `${formatEther(balance)}`;
+    }
+  }
+
   update(_: number): void {
+    if (!this.address || this.address === "0x") {
+      this.getWalletAddress();
+      this.updateBalance();
+    }
     this.road.animate(this.model.road);
     this.updateCars();
     this.updateTrees();
+    this.updateMessageQueue();
+    this.updateActionsCompleted();
     this.renderer.render(this.scene, this.camera);
   }
 
@@ -124,8 +179,15 @@ export class World extends View {
   }
 
   updateCars() {
-    for (const [viewId, carM] of this.model.cars) {
-      let car = this.cars.get(viewId);
+    for (const [address, car] of this.cars) {
+      if (!this.model.cars.has(address)) {
+        this.scene.remove(car.get());
+        this.cars.delete(address);
+      }
+    }
+
+    for (const [address, carM] of this.model.cars) {
+      let car = this.cars.get(address);
       if (!car) {
         car = new Car({
           speed: carM.speed,
@@ -134,14 +196,87 @@ export class World extends View {
             body: 0x1f617d,
             cabin: 0x2d9ecf,
           },
-          viewId,
+          address,
         });
-        this.cars.set(viewId, car);
+        this.cars.set(address, car);
         this.scene.add(car.get());
       }
       car.speed = carM.speed;
       car.changeLane(carM.lane);
       car.animate(carM);
+    }
+  }
+
+  updateMessageQueue() {
+    for (const [nonce, message] of this.model.messageQueue) {
+      if (nonce > this.nonce) {
+        if (
+          (this.processingMessage === this.nonce &&
+            message.from === this.address) ||
+          message.to === this.address
+        ) {
+          this.nonce = nonce;
+          this.processingMessage = this.nonce - 1;
+          this.wallet.signMessage(message, true).then((signature) => {
+            this.publish(this.model.id, "set-bribe", {
+              signature,
+              nonce,
+              isBriber: message.from === this.address,
+            });
+            this.startAction = this.nonce;
+          });
+        }
+      }
+    }
+  }
+
+  updateActionsCompleted() {
+    if (this.startAction === this.nonce) {
+      const message = this.model.messageQueue.get(this.nonce);
+      const fromCar = this.model.cars.get(message?.from as Address) as CarModel;
+      const toCar = this.model.cars.get(message?.to as Address) as CarModel;
+      if (!!message && fromCar.z < toCar.z && fromCar.lane === toCar.lane) {
+        if (message.from === this.address || message.to === this.address) {
+          this.startAction = this.nonce - 1;
+          this.wallet.signMessage(message, false).then((signature) => {
+            this.publish(this.model.id, "set-settle", {
+              signature,
+              nonce: message.nonce,
+              isBriber: message.from === this.address,
+            });
+            if (message.to === this.address) {
+              this.collectPayment = message;
+              if (this.collectButton) {
+                this.collectButton.classList.add("show");
+                this.collectButton.innerHTML = `Collect ${parseGwei(
+                  message.amount
+                )}ETH`;
+              }
+            }
+          });
+        }
+      }
+    }
+  }
+
+  async handleCollectPayment() {
+    if (!this.collectPayment) {
+      this.collectPayment = undefined;
+      this.collectButton?.classList.remove("show");
+      return;
+    }
+    try {
+      const message = this.model.messageQueue.get(this.nonce) as Message;
+      const tx = await this.wallet.sendMessage(message);
+      console.log(tx);
+      await waitForTransaction({
+        hash: tx.hash,
+      });
+      this.updateBalance();
+      this.collectPayment = undefined;
+      this.collectButton?.classList.remove("show");
+    } catch (e) {
+      console.log(e);
     }
   }
 

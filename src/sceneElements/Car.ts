@@ -6,11 +6,12 @@ import {
   MeshLambertMaterial,
 } from "three";
 import Vehicle from "./Vehicle";
+import { Address } from "viem";
 
 type Props = {
   lane: "left" | "right";
   speed: number;
-  viewId: string;
+  address: Address;
   colors?: {
     body: ColorRepresentation;
     cabin: ColorRepresentation;
@@ -19,7 +20,7 @@ type Props = {
 };
 
 export default class Car extends Vehicle {
-  constructor({ speed, lane, colors, viewId }: Props) {
+  constructor({ speed, lane, colors, address }: Props) {
     const wheels = Car.createWheels(colors?.rims);
 
     const main = new Mesh(
@@ -33,7 +34,7 @@ export default class Car extends Vehicle {
       new BoxGeometry(12, 6, 16),
       new MeshLambertMaterial({ color: colors?.cabin || 0xffffff })
     );
-    cabin.name = viewId;
+    cabin.name = address;
     cabin.castShadow = true;
     cabin.position.z = 2;
     cabin.position.y = 14;

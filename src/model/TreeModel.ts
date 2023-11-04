@@ -2,7 +2,8 @@ import { ISOMETRIC_ADJUSTED_PLANE, ROAD_WIDTH } from "../system/constants";
 import ModelWithCoordinates from "./ModelWithCoordinates";
 
 export default class TreeModel extends ModelWithCoordinates {
-  init(): void {
+  init(props: any): void {
+    super.init(props);
     this.setRandomPosition(true);
   }
 
