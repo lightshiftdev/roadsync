@@ -34,6 +34,7 @@ export default class SimModel extends Model {
 
     this.subscribe(this.sessionId, "view-exit", this.viewExited);
     this.subscribe(this.id, "custom-view-join", this.customViewJoined);
+    this.subscribe(this.id, "custom-view-left", this.customViewExited);
     this.subscribe(this.id, "add-message-to-queue", this.addMessageToQueue);
     this.subscribe(this.id, "set-bribe", this.setMessageBribe);
     this.subscribe(this.id, "set-settle", this.setMessageSettle);
@@ -104,6 +105,12 @@ export default class SimModel extends Model {
     const car = CarModel.create({ address });
     car.setPosition(this.cars.size * 50, "right");
     this.cars.set(address, car);
+  }
+
+  customViewExited(address: Address) {
+    const car = this.cars.get(address);
+    this.cars.delete(address);
+    car?.destroy();
   }
 
   viewExited(address: Address) {

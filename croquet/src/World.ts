@@ -151,9 +151,14 @@ export class World extends View {
   }
 
   getWalletAddress() {
-    this.address = this.wallet.getAddress();
-    if (this.address !== "0x") {
-      this.publish(this.model.id, "custom-view-join", this.address);
+    const address = this.wallet.getAddress();
+    if (this.address !== address) {
+      console.log(address);
+      if (this.address !== "0x") {
+        this.publish(this.model.id, "custom-view-left", this.address);
+      }
+      this.address = address;
+      this.publish(this.model.id, "custom-view-join", address);
     }
   }
 
@@ -166,10 +171,7 @@ export class World extends View {
   }
 
   update(_: number): void {
-    if (!this.address || this.address === "0x") {
-      this.getWalletAddress();
-      this.updateBalance();
-    }
+    this.getWalletAddress();
     this.road.animate(this.model.road);
     this.updateCars();
     this.updateTrees();
