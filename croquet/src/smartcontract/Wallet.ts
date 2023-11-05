@@ -40,18 +40,15 @@ export default class Wallet {
   setAddress() {
     const { address } = getAccount();
     const network = getNetwork();
-    if (address) {
-      this.address = address;
-    }
+
+    this.address = address || "0x";
     if (network.chain?.id) {
       this.chainId = network.chain.id;
     }
   }
 
   getAddress() {
-    if (this.address === "0x") {
-      this.setAddress();
-    }
+    this.setAddress();
     return this.address;
   }
 

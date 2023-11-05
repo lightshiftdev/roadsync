@@ -153,26 +153,27 @@ export class World extends View {
   getWalletAddress() {
     const address = this.wallet.getAddress();
     if (this.address !== address) {
-      console.log(address);
       if (this.address !== "0x") {
         this.publish(this.model.id, "custom-view-left", this.address);
       }
       this.address = address;
-      this.publish(this.model.id, "custom-view-join", address);
+      if (!!this.address && this.address !== "0x") {
+        this.publish(this.model.id, "custom-view-join", address);
+      }
     }
   }
 
   async updateBalance() {
     const balanceElement = document.querySelector("#user-balance");
-    if (balanceElement && this.address !== "0x") {
+    if (balanceElement && this.address && this.address !== "0x") {
       const balance = await this.wallet.readContract();
       balanceElement.innerHTML = `${formatEther(balance)}`;
     }
   }
 
   update(_: number): void {
-    this.getWalletAddress();
     this.road.animate(this.model.road);
+    this.getWalletAddress();
     this.updateCars();
     this.updateTrees();
     this.updateMessageQueue();
