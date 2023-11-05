@@ -37,4 +37,4 @@ The built application will be on the `dist\` directory.
 
 ### Smart Contracts
 
-The smart contracts component can be found on the `contracts/` directory, it has its own README.
+The smart contracts component can be found on the `contracts/` directory, it has its own [README](https://github.com/lightshiftdev/roadsync/tree/master/contracts).
