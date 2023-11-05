@@ -8,3 +8,51 @@ html,
 body {
   overflow: hidden;
 }
+
+.actions-buttons button,
+#collect-payment {
+  display: none;
+  margin-left: 10px;
+  padding: 10px;
+  border-radius: 15px;
+  border: 1px solid cadetblue;
+  background-color: cornflowerblue;
+  color: aliceblue;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.actions-buttons {
+  display: flex;
+  justify-content: center;
+  align-items: end;
+  gap: 5px;
+}
+
+.actions-buttons button {
+  display: block;
+}
+
+.actions-vertical {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.actions-buttons button:disabled,
+#collect-payment:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+#collect-payment.show {
+  display: inline-block;
+}
+h1 {
+  display: flex;
+}
+.footer {
+  position: absolute;
+  bottom: 40px;
+  left: 40px;
+}

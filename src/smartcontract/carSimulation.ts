@@ -1,5 +1,5 @@
 const simulationContract = {
-  address: "0x593DdB78B924a815cA000926A8a8263661618164",
+  address: "0xD4C2FA49601dE234462a66aeacA5b6ea85E22543", // Core DAO 0xD4C2FA49601dE234462a66aeacA5b6ea85E22543 foundry: 0x593DdB78B924a815cA000926A8a8263661618164
   abi: [
     {
       inputs: [],

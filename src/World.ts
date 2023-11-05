@@ -38,6 +38,7 @@ export class World extends View {
   startAction: number;
   collectPayment?: Message;
   collectButton;
+  i: number;
 
   constructor(model: SimModel) {
     super(model);
@@ -54,7 +55,10 @@ export class World extends View {
     this.nonce = this.model.nonce;
     this.processingMessage = this.model.nonce - 1;
     this.startAction = this.model.nonce - 1;
-    this.collectButton = document.querySelector("#collect-payment");
+    this.i = 0;
+    this.collectButton = document.querySelector(
+      "#collect-payment"
+    ) as HTMLButtonElement;
     this.collectButton?.addEventListener(
       "click",
       this.handleCollectPayment.bind(this)
@@ -79,6 +83,19 @@ export class World extends View {
     this.render();
 
     void this.updateBalance();
+
+    document.querySelector("#control-up")?.addEventListener("click", () => {
+      this.publish(this.address, "accelerate");
+    });
+    document.querySelector("#control-down")?.addEventListener("click", () => {
+      this.publish(this.address, "decelerate");
+    });
+    document.querySelector("#control-left")?.addEventListener("click", () => {
+      this.publish(this.address, "change-left");
+    });
+    document.querySelector("#control-right")?.addEventListener("click", () => {
+      this.publish(this.address, "change-right");
+    });
 
     document.onkeydown = (e: KeyboardEvent) => {
       if (e.repeat) return;
@@ -159,6 +176,11 @@ export class World extends View {
     this.updateMessageQueue();
     this.updateActionsCompleted();
     this.renderer.render(this.scene, this.camera);
+    if (this.i === 60 * 3) {
+      this.i = 0;
+      this.updateBalance();
+    }
+    this.i += 1;
   }
 
   updateTrees() {
@@ -193,8 +215,8 @@ export class World extends View {
           speed: carM.speed,
           lane: carM.lane,
           colors: {
-            body: 0x1f617d,
-            cabin: 0x2d9ecf,
+            body: carM.color,
+            cabin: carM.color,
           },
           address,
         });
@@ -266,17 +288,17 @@ export class World extends View {
       return;
     }
     try {
+      this.collectButton.disabled = true;
       const message = this.model.messageQueue.get(this.nonce) as Message;
       const tx = await this.wallet.sendMessage(message);
-      console.log(tx);
       await waitForTransaction({
         hash: tx.hash,
       });
-      this.updateBalance();
+      this.collectButton.disabled = false;
       this.collectPayment = undefined;
       this.collectButton?.classList.remove("show");
     } catch (e) {
-      console.log(e);
+      console.error(e);
     }
   }
 

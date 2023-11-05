@@ -11,6 +11,7 @@ export default class CarModel extends ModelWithCoordinates {
   speed = 0;
   address = "";
   destination?: number;
+  color = "#000000".replace(/0/g, () => (~~(Math.random() * 16)).toString(16));
 
   get game() {
     return this.wellKnownModel("modelRoot") as SimModel;

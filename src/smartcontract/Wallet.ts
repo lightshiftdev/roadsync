@@ -11,6 +11,7 @@ import {
   signTypedData,
   writeContract,
 } from "@wagmi/core";
+import { coreTestnet } from "../utils/coredTestnet";
 
 // 1. Define constants
 const projectId = "895f25c9abaae9ec67a3b66682290114";
@@ -21,7 +22,7 @@ const metadata = {
   description: "Croquet Car Simulator",
 };
 
-const chains = [foundry];
+const chains = [foundry, coreTestnet];
 const wagmiConfig = defaultWagmiConfig({ chains, projectId, metadata });
 
 // 3. Create modal
@@ -85,7 +86,6 @@ export default class Wallet {
   }
 
   sendMessage(message: Message) {
-    console.log(message);
     return writeContract({
       abi: simulationContract.abi,
       address: simulationContract.address as Address,
