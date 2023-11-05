@@ -1,0 +1,32 @@
+set positional-arguments
+
+anvil_url := "http://localhost:8545"
+anvil_mnemonic := "test test test test test test test test test test test junk"
+anvil_sender := "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"
+
+core_mnemonic := "cousin timber deposit junior arrive inspire avoid cost pear wink pulp dinner flee human long"
+core_sender := "0xbdc5335Fd04A623938F6c40F62AEC0279E716cAc"
+core_url := "https://rpc.test.btcs.network/"
+
+anvil script:
+  forge script \
+    $1 \
+    --fork-url {{ anvil_url }} \
+    --broadcast \
+    --mnemonics "{{ core_mnemonic }}" \
+    --sender "{{ core_sender }}"
+
+core script:
+  forge script \
+    $1 \
+    --fork-url {{ core_url }} \
+    --broadcast \
+    --mnemonics "{{ core_mnemonic }}" \
+    --sender "{{ core_sender }}" \
+    --legacy
+
+dev:
+  #!/bin/bash
+  killall -9 anvil
+  sleep 1 && just anvil script/Simulation.s.sol &
+  anvil --host 0.0.0.0 --mnemonic "{{ core_mnemonic }}"
