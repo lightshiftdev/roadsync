@@ -19,7 +19,7 @@ There are two components of the project, the shared simulation that uses [Croque
 
 The Croquet component can be found on the `croquet/` directory.
 
-To be able to run the application a Croquet API Key is needed and a `.env` file needs to be created on the root of `croquet/` directory.
+To be able to run the application a Croquet API Key (obtainable [here](https://croquet.io/keys/)) is needed and a `.env` file needs to be created on the root of `croquet/` directory.
 
 **`.env` EXAMPLE**
 ```
