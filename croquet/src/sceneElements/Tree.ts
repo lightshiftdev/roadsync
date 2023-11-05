@@ -1,5 +1,4 @@
 import { BoxGeometry, Group, Mesh, MeshLambertMaterial } from "three";
-import SceneElement from "./SceneElement";
 import TreeModel from "../model/TreeModel";
 import CartesianAnimatableElement from "./CartesianAnimatableElement";
 

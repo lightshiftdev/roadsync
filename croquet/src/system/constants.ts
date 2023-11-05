@@ -1,5 +1,3 @@
-import { Address } from "viem";
-
 export const WINDOW_WIDTH = 800;
 export const WINDOW_HEIGHT = 600;
 export const ASPECT_RATIO = WINDOW_WIDTH / WINDOW_HEIGHT;

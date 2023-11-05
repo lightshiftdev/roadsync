@@ -17,7 +17,7 @@ import { View } from "@croquet/croquet";
 import SimModel, { Message } from "./model/SimModel";
 import { Raycaster, Vector2 } from "three";
 import Wallet from "./smartcontract/Wallet";
-import { Address, formatEther, parseEther, parseGwei } from "viem";
+import { Address, formatEther, parseGwei } from "viem";
 import CarModel from "./model/CarModel";
 import { waitForTransaction } from "@wagmi/core";
 // import { CameraHelper } from "three";
